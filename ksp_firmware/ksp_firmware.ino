@@ -12,14 +12,14 @@ const int rcsPin = 5;
 const int panicPin = 4;
 
 // Output of switches
-const String combo1Char = "1";
-const String combo2Char = "2";
-const String combo3Char = "3";
-const String combo4Char = "4";
-const String gearChar = "g";
-const String sasChar = "t";
-const String rcsChar = "r";
-const String panicChar = "Backspace";
+const char combo1Char = '1';
+const char combo2Char = '2';
+const char combo3Char = '3';
+const char combo4Char = '4';
+const char gearChar = 'g';
+const char sasChar = 't';
+const char rcsChar = 'r';
+const char panicChar = 8; // ASCII for backspace
 
 // State
 int combo1PinState = 0;
@@ -41,15 +41,20 @@ int sasPinStatePrev = 0;
 int rcsPinStatePrev = 0;
 int panicPinStatePrev = 0;
 
-void checkState(int State, int prevState, String character) {
+/**
+ * Checks state against previous state, toggling mode
+ * if they differ. Results in keyboard key being pressed.
+ */
+void checkState(int State, int prevState, char character) {
   if(State != prevState) {
-    Serial.print(character);
-    delay(250); // Crucial to allow for switch to settle
+    Keyboard.press(character);
+    Keyboard.releaseAll();
+    delay(100); // Crucial to allow for switch to settle
   }
 }
 
 void setup() {
-  // Init switch(es)
+  // Init switches
   pinMode(combo1Pin, INPUT);
   pinMode(combo2Pin, INPUT);
   pinMode(combo3Pin, INPUT);
@@ -60,7 +65,7 @@ void setup() {
   pinMode(panicPin, INPUT);
 
   // Init keyboard
-  //Keyboard.begin();
+  Keyboard.begin();
 }
 
 void loop() {
@@ -85,7 +90,7 @@ void loop() {
   checkState(panicPinState, panicPinStatePrev, panicChar);
  
 
-  // Update previous pin states
+  // Update previous pin states, end of loop
   combo1PinStatePrev = combo1PinState;
   combo2PinStatePrev = combo2PinState;
   combo3PinStatePrev = combo3PinState;
